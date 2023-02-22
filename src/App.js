@@ -5,10 +5,23 @@ import Moveable from "react-moveable";
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [imagen, setImagen] = useState([]);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/photos")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const imagesUrl = data.map((c) => {
+          return c.url;
+        });
+        setImagen(imagesUrl);
+      });
+  }, []);
 
   const addMoveable = () => {
     // Create a new moveable component and add it to the array
-    const COLORS = ["red", "blue", "yellow", "green", "purple"];
 
     setMoveableComponents([
       ...moveableComponents,
@@ -18,7 +31,7 @@ const App = () => {
         left: 0,
         width: 100,
         height: 100,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        color: imagen[Math.floor(Math.random() * imagen.length)],
         updateEnd: true
       },
     ]);
@@ -207,48 +220,10 @@ const Component = ({
   
       }
      `);
-        return <DeleteAll key="delete-all"><button onClick={()=>deletemoveable(id)}>DELETE</button></DeleteAll>
+        return <DeleteAll key="delete-all"><button onClick={()=>deletemoveable(id)}>X</button></DeleteAll>
      } 
   }
   
-  const [imagen, setImagen] = useState('');
-
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/photos')
-      .then(response => response.json())
-      .then(data => {
-        const randomIndex = Math.floor(Math.random() * data.length);
-        const randomImage = data[randomIndex];
-        setImagen(randomImage.url);
-      });
-  }, []);
-  const Image = {
-    name: "image",
-    props: {},
-    events: {},
-    render(moveable) {
-        const rect = moveable.getRect();
-        
-        // use css for able
-        const ImageViewer = moveable.useCSS("div", `
-        {
-          z-index: 1000;
-        }
-        `);
-        // Add key (required)
-        // Add class prefix moveable-(required)
-        return <ImageViewer key="image-viewer" className={"moveable-image"}>
-
-    <img src={imagen} style={{
-              width: rect.width,
-              height: rect.height,
-              pointerEvents: 'none'
-            }}/>
-
-        </ImageViewer>;
-    }
-  }
- 
 
   return (
     <>
@@ -262,7 +237,8 @@ const Component = ({
           left: left,
           width: width,
           height: height,
-          background: color,
+          backgroundImage: `url(${color})`,
+          objectFit: "contain"
         }}
         onClick={() => setSelected(id)}
       />
@@ -288,8 +264,8 @@ const Component = ({
         zoom={1}
         origin={false}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        ables= {[Delete, Image]}
-        props={{delete: true, image: true}}
+        ables= {[Delete]}
+        props={{delete: true}}
       />
     </>
   );
