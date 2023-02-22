@@ -5,14 +5,14 @@ import Moveable from "react-moveable";
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [imagen, setImagen] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/photos")
       .then((response) => {return response.json();})
       .then((data) => {const imagesUrl = data.map((c) => {
           return c.url;});
-        setImagen(imagesUrl);
+          setData(imagesUrl);
       });
   }, []);
 
@@ -27,7 +27,7 @@ const App = () => {
         left: 0,
         width: 100,
         height: 100,
-        color: imagen[Math.floor(Math.random() * imagen.length)],
+        color: data[Math.floor(Math.random() * data.length)],
         updateEnd: true
       },
     ]);
