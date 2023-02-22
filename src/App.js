@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Moveable from "react-moveable";
 
+
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -32,7 +33,6 @@ const App = () => {
     });
     setMoveableComponents(updatedMoveables);
   };
-
   const handleResizeStart = (index, e) => {
     console.log("e", e.direction);
     // Check if the resize is coming from the left handle
@@ -49,11 +49,21 @@ const App = () => {
       // Save the initial left and width values of the moveable component
       const initialLeft = e.left;
       const initialWidth = e.width;
-
+      
       // Set up the onResize event handler to update the left value based on the change in width
     }
   };
+  
+  
+  
+  const deletemoveable = (id) => {
+    const deletemoveable = moveableComponents.filter((moveable) => {
+      return moveable.id !== id
+    })
 
+    setMoveableComponents(deletemoveable)
+  }
+  
   return (
     <main style={{ height : "100vh", width: "100vw" }}>
       <button onClick={addMoveable}>Add Moveable1</button>
@@ -64,6 +74,7 @@ const App = () => {
           background: "black",
           height: "80vh",
           width: "80vw",
+          overflow: "hidden"
         }}
       >
         {moveableComponents.map((item, index) => (
@@ -74,6 +85,7 @@ const App = () => {
             handleResizeStart={handleResizeStart}
             setSelected={setSelected}
             isSelected={selected === item.id}
+            deletemoveable={deletemoveable}
           />
         ))}
       </div>
@@ -95,6 +107,7 @@ const Component = ({
   setSelected,
   isSelected = false,
   updateEnd,
+  deletemoveable
 }) => {
   const ref = useRef();
 
@@ -184,6 +197,59 @@ const Component = ({
     );
   };
 
+  const Delete = {
+     name: "delete", props: {}, events: {},render(moveable){
+
+       const them = moveable.getRect();
+       const {pic} = moveable.state;
+
+       const DeleteAll = moveable.useCSS("div",` {
+  
+      }
+     `);
+        return <DeleteAll key="delete-all"><button onClick={()=>deletemoveable(id)}>DELETE</button></DeleteAll>
+     } 
+  }
+  
+  const [imagen, setImagen] = useState('');
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/photos')
+      .then(response => response.json())
+      .then(data => {
+        const randomIndex = Math.floor(Math.random() * data.length);
+        const randomImage = data[randomIndex];
+        setImagen(randomImage.url);
+      });
+  }, []);
+  const Image = {
+    name: "image",
+    props: {},
+    events: {},
+    render(moveable) {
+        const rect = moveable.getRect();
+        
+        // use css for able
+        const ImageViewer = moveable.useCSS("div", `
+        {
+          z-index: 1000;
+        }
+        `);
+        // Add key (required)
+        // Add class prefix moveable-(required)
+        return <ImageViewer key="image-viewer" className={"moveable-image"}>
+
+    <img src={imagen} style={{
+              width: rect.width,
+              height: rect.height,
+              pointerEvents: 'none'
+            }}/>
+
+        </ImageViewer>;
+    }
+  }
+ 
+
   return (
     <>
       <div
@@ -215,7 +281,6 @@ const Component = ({
           });
         }}
         onResize={onResize}
-        onResizeEnd={onResizeEnd}
         keepRatio={false}
         throttleResize={1}
         renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
@@ -223,6 +288,8 @@ const Component = ({
         zoom={1}
         origin={false}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        ables= {[Delete, Image]}
+        props={{delete: true, image: true}}
       />
     </>
   );
