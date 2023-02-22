@@ -9,13 +9,9 @@ const App = () => {
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/photos")
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        const imagesUrl = data.map((c) => {
-          return c.url;
-        });
+      .then((response) => {return response.json();})
+      .then((data) => {const imagesUrl = data.map((c) => {
+          return c.url;});
         setImagen(imagesUrl);
       });
   }, []);
