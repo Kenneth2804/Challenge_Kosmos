@@ -206,12 +206,8 @@ const Component = ({
     );
   };
 
-  const Delete = {
-     name: "delete", props: {}, events: {},render(moveable){
-
-       const them = moveable.getRect();
-       const {pic} = moveable.state;
-
+  const Borrar = {
+     name: "borrar", props: {}, events: {},render(moveable){
        const DeleteAll = moveable.useCSS("div",` {
   
       }
@@ -260,8 +256,8 @@ const Component = ({
         zoom={1}
         origin={false}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        ables= {[Delete]}
-        props={{delete: true}}
+        ables= {[Borrar]}
+        props={{borrar: true}}
       />
     </>
   );
